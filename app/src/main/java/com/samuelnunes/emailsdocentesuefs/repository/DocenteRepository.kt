@@ -7,9 +7,8 @@ import com.samuelnunes.emailsdocentesuefs.model.Docente
 
 class DocenteRepository(private val dao: DocenteDAO) {
 
-    fun buscaTodos() : LiveData<Set<Docente>> = dao.read()
+    fun buscaTodos() : LiveData<Resource<Set<Docente>>> = dao.read()
 
-
-//    fun buscaPorId(id: Long): LiveData<Docente> = dao.buscaPorId(id)
+    fun buscaPorId(id: String): Docente? = dao.buscaPorId(id)
 
 }

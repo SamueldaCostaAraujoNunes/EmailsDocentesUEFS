@@ -1,47 +1,51 @@
 package com.samuelnunes.emailsdocentesuefs.database.dao
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
+import com.samuelnunes.emailsdocentesuefs.database.DAO
 import com.samuelnunes.emailsdocentesuefs.model.Docente
+import com.samuelnunes.emailsdocentesuefs.repository.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
-val DOCENTES_PATH = "docentes"
+const val DOCENTES_PATH = "docentes"
 
-class DocenteDAO(private val firebase: FirebaseFirestore) : DAO<Docente> {
-    private val __docentes: MutableLiveData<Set<Docente>> = MutableLiveData()
+class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
+    private val docentesLiveData: MutableLiveData<Resource<Set<Docente>>> = MutableLiveData()
+
     private val collection = firebase.collection(DOCENTES_PATH)
-    override val data: LiveData<Set<Docente>>
-        get() = __docentes
+    override val data: LiveData<Resource<Set<Docente>>>
+        get() = docentesLiveData
 
-    override fun create(docente: Docente) {
-        if (docente.id == null) {
-            add(docente)
+    override fun create(element: Docente) {
+        if (element.id == null) {
+            add(element)
         } else {
-            update(docente)
+            update(element)
         }
     }
 
-    private fun add(docente: Docente) {
+    private fun add(element: Docente) {
         CoroutineScope(IO).launch {
             collection
-                .add(docente)
+                .add(element)
                 .addOnSuccessListener { documentReference ->
-                    docente.id = documentReference.id
+                    element.id = documentReference.id
                     saveLocal { docentes ->
-                        docentes.add(docente)
+                        docentes.add(element)
                     }
                 }
-                .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
+                .addOnFailureListener { e ->
+                    val erro = e.toString()
+                    criaResourceDeFalha(erro)
+                }
 
         }.start()
     }
 
-    override fun read(): LiveData<Set<Docente>> {
+    override fun read(): LiveData<Resource<Set<Docente>>> {
         CoroutineScope(IO).launch {
             collection
                 .get()
@@ -60,66 +64,70 @@ class DocenteDAO(private val firebase: FirebaseFirestore) : DAO<Docente> {
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.w(
-                        TAG,
-                        "Error deleting document",
-                        e
-                    )
+                    val erro = e.toString()
+                    criaResourceDeFalha(erro)
                 }
         }.start()
 
-        return __docentes
+        return docentesLiveData
     }
 
-    override fun update(docente: Docente) {
+    override fun update(element: Docente) {
         CoroutineScope(IO).launch {
             collection
-                .document(docente.id.toString())
-                .set(createDocenteWithoutId(docente))
+                .document(element.id.toString())
+                .set(createDocenteWithoutId(element))
                 .addOnSuccessListener {
                     saveLocal { docentes ->
-                        docentes.add(docente)
+                        docentes.add(element)
                     }
                 }
-                .addOnFailureListener {
-
+                .addOnFailureListener { e->
+                    val erro = e.toString()
+                    criaResourceDeFalha(erro)
                 }
         }.start()
     }
 
-    override fun delete(docente: Docente) {
+    override fun delete(element: Docente) {
         CoroutineScope(IO).launch {
-            if (docente.id != null) {
-                collection.document(docente.id!!)
+            if (element.id != null) {
+                collection.document(element.id!!)
                     .delete()
                     .addOnSuccessListener {
                         saveLocal { docentes ->
-                            docentes.remove(docente)
+                            docentes.remove(element)
                         }
                     }
                     .addOnFailureListener { e ->
-                        Log.w(
-                            TAG,
-                            "Error deleting document",
-                            e
-                        )
+                        val erro = e.toString()
+                        criaResourceDeFalha(erro)
                     }
             } else {
-                Log.w(
-                    TAG,
-                    "Error deleting document"
-                )
+                criaResourceDeFalha("Docente sem ID")
             }
         }.start()
     }
 
+
+    private fun criaResourceDeFalha(erro: String) {
+        val resourceAtual = docentesLiveData.value
+        docentesLiveData.value = if (resourceAtual != null) {
+            Resource(dado = resourceAtual.dado, erro = erro)
+        } else Resource(dado = null, erro = erro)
+    }
+
     private fun saveLocal(action: (docentes: MutableSet<Docente>) -> Unit) {
-        val docentes: MutableSet<Docente> = __docentes.value?.toMutableSet() ?: mutableSetOf()
+        val docentes: MutableSet<Docente> = docentesLiveData.value?.dado?.toMutableSet() ?: mutableSetOf()
         action(docentes)
-        __docentes.value = docentes.toSet()
+        docentesLiveData.value = Resource(dado = docentes.toSet())
     }
 
     private fun createDocenteWithoutId(d: Docente): Docente {
         return Docente(d.nome, d.email)
+    }
+
+    fun buscaPorId(id: String): Docente? {
+        return docentesLiveData.value?.dado?.find { docente -> docente.id == id }
     }
 }
