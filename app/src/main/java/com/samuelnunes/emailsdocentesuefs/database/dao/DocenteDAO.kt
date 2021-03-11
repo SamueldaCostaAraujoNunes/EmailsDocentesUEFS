@@ -12,8 +12,10 @@ import kotlinx.coroutines.launch
 
 const val DOCENTES_PATH = "docentes"
 
+@Suppress("CAST_NEVER_SUCCEEDS")
 class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
     private val docentesLiveData: MutableLiveData<Resource<Set<Docente>>> = MutableLiveData()
+    private val docenteLiveData: MutableLiveData<Resource<Docente>> = MutableLiveData()
 
     private val collection = firebase.collection(DOCENTES_PATH)
     override val data: LiveData<Resource<Set<Docente>>>
@@ -33,7 +35,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
                 .add(element)
                 .addOnSuccessListener { documentReference ->
                     element.id = documentReference.id
-                    saveLocal { docentes ->
+                    saveLocalDocentes { docentes ->
                         docentes.add(element)
                     }
                 }
@@ -50,7 +52,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
             collection
                 .get()
                 .addOnSuccessListener { task ->
-                    saveLocal { docentes ->
+                    saveLocalDocentes { docentes ->
                         for (document in task.documents) {
                             val json = document.data
                             val id = document.id
@@ -78,7 +80,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
                 .document(element.id.toString())
                 .set(createDocenteWithoutId(element))
                 .addOnSuccessListener {
-                    saveLocal { docentes ->
+                    saveLocalDocentes { docentes ->
                         docentes.add(element)
                     }
                 }
@@ -95,7 +97,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
                 collection.document(element.id!!)
                     .delete()
                     .addOnSuccessListener {
-                        saveLocal { docentes ->
+                        saveLocalDocentes { docentes ->
                             docentes.remove(element)
                         }
                     }
@@ -117,17 +119,31 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
         } else Resource(dado = null, erro = erro)
     }
 
-    private fun saveLocal(action: (docentes: MutableSet<Docente>) -> Unit) {
+    private fun saveLocalDocentes(action: (docentes: MutableSet<Docente>) -> Unit) {
         val docentes: MutableSet<Docente> = docentesLiveData.value?.dado?.toMutableSet() ?: mutableSetOf()
         action(docentes)
         docentesLiveData.value = Resource(dado = docentes.toSet())
     }
 
+
     private fun createDocenteWithoutId(d: Docente): Docente {
         return Docente(d.nome, d.email)
     }
 
-    fun buscaPorId(id: String): Docente? {
-        return docentesLiveData.value?.dado?.find { docente -> docente.id == id }
+    fun buscaPorId(id: String): LiveData<Resource<Docente>> {
+        CoroutineScope(IO).launch {
+            val docente = docentesLiveData.value?.dado?.find { docente -> docente.id == id }
+            docenteLiveData.postValue(if(docente != null){
+                 Resource(dado = docente)
+            }else{
+                val erro = "Não foi possivel encontrar o ID"
+                val resourceAtual = docenteLiveData.value
+                if (resourceAtual != null) {
+                    Resource(dado = resourceAtual.dado, erro = erro)
+                } else
+                    Resource(dado = null as Docente, erro = erro)
+            })
+        }.start()
+        return docenteLiveData
     }
 }

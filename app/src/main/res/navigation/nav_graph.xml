@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listDocentesFragment">
+
+    <fragment
+        android:id="@+id/listDocentesFragment"
+        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.ListDocentesFragment"
+        android:label="fragment_list_docentes"
+        tools:layout="@layout/fragment_list_docentes" >
+        <action
+            android:id="@+id/action_listDocentesFragment_to_adicionaDocenteFragment"
+            app:destination="@id/adicionaDocenteFragment" />
+        <action
+            android:id="@+id/action_listDocentesFragment_to_detalhesDocenteFragment"
+            app:destination="@id/detalhesDocenteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adicionaDocenteFragment"
+        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.AdicionaDocenteFragment"
+        android:label="adiciona_docente_fragment"
+        tools:layout="@layout/adiciona_docente_fragment" />
+    <fragment
+        android:id="@+id/detalhesDocenteFragment"
+        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.DetalhesDocenteFragment"
+        android:label="detalhes_docente_fragment"
+        tools:layout="@layout/detalhes_docente_fragment" />
+</navigation>

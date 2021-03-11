@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 fun <T : Any> RecyclerView.withSimpleAdapter(
     dataList: List<T>, @LayoutRes layoutID: Int,
+    action: (data: T) -> Unit,
     onBindView: BaseViewHolder<T>.(data: T) -> Unit
 ): SimpleRecyclerAdapter<T> {
-    val recyclerAdapter = SimpleRecyclerAdapter(dataList, layoutID, onBindView)
+    val recyclerAdapter = SimpleRecyclerAdapter(dataList, layoutID, action, onBindView)
     adapter = recyclerAdapter
     return recyclerAdapter
 }

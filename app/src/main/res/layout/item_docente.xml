@@ -15,7 +15,7 @@
         android:padding="8dp">
 
         <TextView
-            android:id="@+id/docente_name"
+            android:id="@+id/item_docente_name"
             android:layout_width="match_parent"
             android:textSize="20sp"
             android:layout_height="wrap_content"
@@ -25,17 +25,17 @@
             tools:text="Nome Docente" />
 
         <TextView
-            android:id="@+id/docente_email"
+            android:id="@+id/item_docente_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/docente_name"
+            app:layout_constraintTop_toBottomOf="@+id/item_docente_name"
             tools:text="Email Docente" />
 
         <TextView
             android:id="@+id/docente_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/docente_email"
+            app:layout_constraintTop_toBottomOf="@+id/item_docente_email"
             tools:text="ID Docente" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
