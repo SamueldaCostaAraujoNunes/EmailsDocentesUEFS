@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.abed.myapplication.recyclerView.withSimpleAdapter
@@ -51,6 +50,7 @@ class ListDocentesFragment : Fragment() {
                     .withSimpleAdapter(
                         docentesEncontrados.toList(),
                         R.layout.item_docente,
+                        
                         { docente ->
                             val controlador = findNavController()
                             val dados = Bundle()
@@ -64,7 +64,7 @@ class ListDocentesFragment : Fragment() {
                         }
                     )
             }
-            if(resource.erro != null){
+            if (resource.erro != null) {
                 Log.i("BuscaDocentes", "erro: ${resource.erro}")
             }
         })
