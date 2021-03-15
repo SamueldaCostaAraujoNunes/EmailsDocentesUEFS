@@ -50,7 +50,6 @@ class ListDocentesFragment : Fragment() {
                     .withSimpleAdapter(
                         docentesEncontrados.toList(),
                         R.layout.item_docente,
-                        
                         { docente ->
                             val controlador = findNavController()
                             val dados = Bundle()
