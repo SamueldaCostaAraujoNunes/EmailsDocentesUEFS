@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.AdicionaDocenteFragment">
+    tools:context=".ui.fragment.AdicionaOuEditaDocenteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -36,7 +36,9 @@
             app:layout_constraintBottom_toTopOf="@+id/input_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:inputType="textPersonName"
+            android:autofillHints="AUTOFILL_HINT_PERSON_NAME" />
 
         <EditText
             android:id="@+id/input_email"
@@ -48,7 +50,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/input_name"
             app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="65dp" />
+            tools:layout_editor_absoluteY="65dp"
+            android:autofillHints="username" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

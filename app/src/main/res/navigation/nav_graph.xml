@@ -10,21 +10,16 @@
         android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.ListDocentesFragment"
         android:label="fragment_list_docentes"
         tools:layout="@layout/fragment_list_docentes" >
+
         <action
-            android:id="@+id/action_listDocentesFragment_to_adicionaDocenteFragment"
-            app:destination="@id/adicionaDocenteFragment" />
-        <action
-            android:id="@+id/action_listDocentesFragment_to_detalhesDocenteFragment"
-            app:destination="@id/detalhesDocenteFragment" />
+            android:id="@+id/action_listDocentesFragment_to_adicionaOuEditaDocenteFragment"
+            app:destination="@id/adicionaOuEditaDocenteFragment" />
     </fragment>
     <fragment
-        android:id="@+id/adicionaDocenteFragment"
-        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.AdicionaDocenteFragment"
-        android:label="adiciona_docente_fragment"
-        tools:layout="@layout/adiciona_docente_fragment" />
-    <fragment
-        android:id="@+id/detalhesDocenteFragment"
-        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.DetalhesDocenteFragment"
-        android:label="detalhes_docente_fragment"
-        tools:layout="@layout/detalhes_docente_fragment" />
+        android:id="@+id/adicionaOuEditaDocenteFragment"
+        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.AdicionaOuEditaDocenteFragment"
+        android:label="adiciona_ou_edita_docente_fragment"
+        tools:layout="@layout/adiciona_ou_edita_docente_fragment" />
+
+
 </navigation>

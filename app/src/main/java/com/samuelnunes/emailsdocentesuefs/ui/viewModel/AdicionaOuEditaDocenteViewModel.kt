@@ -6,7 +6,12 @@ import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.repository.DocenteRepository
 import com.samuelnunes.emailsdocentesuefs.repository.Resource
 
-class AdicionaDocenteViewModel(private val repository: DocenteRepository) : ViewModel() {
+class AdicionaOuEditaDocenteViewModel(
+    docenteId: String,
+    private val repository: DocenteRepository
+) : ViewModel() {
 
+    val docente: LiveData<Resource<Docente>> = repository.buscaPorId(docenteId)
     fun addDocente(docente: Docente) = repository.addDocente(docente)
+
 }

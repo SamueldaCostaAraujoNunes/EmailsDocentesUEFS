@@ -38,13 +38,13 @@ class ListDocentesFragment : Fragment() {
         val fab: View = view.findViewById(R.id.fab)
         fab.setOnClickListener {
             val controlador = findNavController()
-            controlador.navigate(R.id.adicionaDocenteFragment)
+            controlador.navigate(R.id.adicionaOuEditaDocenteFragment)
         }
     }
 
     private fun buscaDocentes(view: View) {
 
-        viewModel.buscaTodos().observe(requireActivity(), Observer { resource ->
+        viewModel.buscaTodos().observe(requireActivity(), { resource ->
             val docentesEncontrados = resource.dado
             if (docentesEncontrados != null) {
                 view.findViewById<RecyclerView>(R.id.recyclerView)
@@ -55,12 +55,12 @@ class ListDocentesFragment : Fragment() {
                             val controlador = findNavController()
                             val dados = Bundle()
                             dados.putString(CHAVE_DOCENTE_ID, docente.id)
-                            controlador.navigate(R.id.detalhesDocenteFragment, dados)
+                            controlador.navigate(R.id.adicionaOuEditaDocenteFragment, dados)
                         },
                         { docente ->
                             item_docente_name.text = docente.nome
                             item_docente_email.text = docente.email
-                            docente_id.text = docente.id
+                            docente_depatarment_code.text = docente.departamentoCode
                         }
                     )
             }
