@@ -5,20 +5,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.abed.myapplication.recyclerView.withSimpleAdapter
 import com.samuelnunes.emailsdocentesuefs.R
-import com.samuelnunes.emailsdocentesuefs.ui.activity.CHAVE_DOCENTE_ID
+import com.samuelnunes.emailsdocentesuefs.repository.Resource
+import com.samuelnunes.emailsdocentesuefs.ui.recyclerView.RecyclerViewDocentesAdapter
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.ListDocentesFragmentViewModel
-import kotlinx.android.synthetic.main.item_docente.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
+@ExperimentalCoroutinesApi
 class ListDocentesFragment : Fragment() {
 
     private val viewModel: ListDocentesFragmentViewModel by viewModel()
+    lateinit var adapter: RecyclerViewDocentesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,28 +47,27 @@ class ListDocentesFragment : Fragment() {
 
     private fun buscaDocentes(view: View) {
 
-        viewModel.buscaTodos().observe(requireActivity(), { resource ->
-            val docentesEncontrados = resource.dado
-            if (docentesEncontrados != null) {
-                view.findViewById<RecyclerView>(R.id.recyclerView)
-                    .withSimpleAdapter(
-                        docentesEncontrados.toList(),
-                        R.layout.item_docente,
-                        { docente ->
-                            val controlador = findNavController()
-                            val dados = Bundle()
-                            dados.putString(CHAVE_DOCENTE_ID, docente.id)
-                            controlador.navigate(R.id.adicionaOuEditaDocenteFragment, dados)
-                        },
-                        { docente ->
-                            item_docente_name.text = docente.nome
-                            item_docente_email.text = docente.email
-                            docente_depatarment_code.text = docente.departamentoCode
-                        }
-                    )
-            }
-            if (resource.erro != null) {
-                Log.i("BuscaDocentes", "erro: ${resource.erro}")
+        viewModel.buscaTodos().observe(requireActivity(), Observer { resource ->
+            when (resource.status) {
+                Resource.Status.SUCCESS -> {
+                    val docentesEncontrados = resource.data!!
+                    adapter = RecyclerViewDocentesAdapter(docentesEncontrados.toList())
+                    view.findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
+                }
+                Resource.Status.ERROR -> Log.i(
+                    "BuscaDocentes",
+                    "erro: ${resource.getErrorMessage()}"
+                )
+                Resource.Status.LOADING -> Toast.makeText(
+                    requireContext(),
+                    "Loading!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Resource.Status.CANCEL -> Toast.makeText(
+                    requireContext(),
+                    "Cancel!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }

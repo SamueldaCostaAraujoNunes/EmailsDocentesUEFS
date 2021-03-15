@@ -1,13 +1,11 @@
 package com.samuelnunes.emailsdocentesuefs.database
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.repository.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface DAO<T> {
-    fun create(element: T)
-    fun read(): LiveData<Resource<Set<Docente>>>
-    fun update(element: T)
-    fun delete(element: T)
+    suspend fun create(element: T)
+    suspend fun read(): Flow<Resource<List<Docente>>>
+    suspend fun delete(element: T): Docente?
 }

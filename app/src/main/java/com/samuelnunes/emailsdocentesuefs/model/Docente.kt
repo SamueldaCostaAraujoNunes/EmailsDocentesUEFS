@@ -1,9 +1,20 @@
 package com.samuelnunes.emailsdocentesuefs.model
 
+import com.google.firebase.firestore.DocumentId
+
 data class Docente(
-    val nome: String,
-    val email: String,
-    val departamentoCode: String,
-    val departamentoNome: String,
+    val name: String? = null,
+    val email: String? = null,
+    val departmentCode: String? = null,
+    val departmentName: String? = null,
+    @DocumentId
     var id: String? = null
-)
+) {
+    constructor() : this(
+        name = null,
+        email = null,
+        departmentCode = null,
+        departmentName = null,
+        id = null
+    )
+}

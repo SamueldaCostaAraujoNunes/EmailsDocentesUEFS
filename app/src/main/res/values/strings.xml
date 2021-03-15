@@ -5,4 +5,5 @@
     <string name="email">Email</string>
     <string name="add_docente">Add Docente</string>
     <string name="salvar">Salvar</string>
+    <string name="search">Search</string>
 </resources>
