@@ -1,7 +1,6 @@
 package com.samuelnunes.emailsdocentesuefs.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    Log.i("TAG", "onQueryTextChange: ${newText}")
                     val currentFragment = getForegroundFragment()
                     if (currentFragment is ListDocentesFragment) {
                         currentFragment.adapter.filter(newText)

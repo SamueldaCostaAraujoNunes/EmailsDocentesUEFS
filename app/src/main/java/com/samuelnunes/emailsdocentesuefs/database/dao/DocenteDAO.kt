@@ -2,13 +2,12 @@ package com.samuelnunes.emailsdocentesuefs.database.dao
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.samuelnunes.emailsdocentesuefs.database.DAO
+import com.samuelnunes.emailsdocentesuefs.extensions.asFlow
 import com.samuelnunes.emailsdocentesuefs.extensions.await
 import com.samuelnunes.emailsdocentesuefs.model.Docente
-import com.samuelnunes.emailsdocentesuefs.repository.Resource
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 const val DOCENTES_PATH = "docentes"
@@ -17,22 +16,11 @@ const val DOCENTES_PATH = "docentes"
 class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
     private val collection = firebase.collection(DOCENTES_PATH)
 
-    override suspend fun read() = flow<Resource<List<Docente>>> {
-        try {
-            emit(Resource.loading())
-            val snapshot = collection.get().await()
-            val docentes = mutableListOf<Docente>()
-            if (snapshot != null) {
-                for (document in snapshot.documents) {
-                    document.toObject(Docente::class.java)?.let { docentes.add(it) }
-                }
-            }
-            docentes.sortBy { it.name }
-            emit(Resource.success(docentes))
-        } catch (e: Exception) {
-            emit(Resource.error(e))
-        }
-    }.flowOn(IO)
+    override fun read(): Flow<List<Docente>> {
+        return collection
+            .asFlow()
+            .map { it.toObjects(Docente::class.java) }
+    }
 
     override suspend fun create(element: Docente) {
         if (element.id == null) {
@@ -49,7 +37,6 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
                 element.id = docenteAdicionado.id
             }
             element
-
         } catch (e: Exception) {
             null
         }

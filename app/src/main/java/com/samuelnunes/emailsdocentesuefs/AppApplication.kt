@@ -15,6 +15,7 @@ class AppApplication : Application() {
                     databaseModule,
                     daoModule,
                     repositoryModule,
+                    utilsModule,
                     uiModule,
                     viewModelModule
                 )

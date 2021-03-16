@@ -1,28 +1,33 @@
 package com.samuelnunes.emailsdocentesuefs.ui.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.model.Docente
+import org.koin.java.KoinJavaComponent.inject
 
 
 class RecyclerViewDocentesAdapter(private val docentes: List<Docente>) :
     RecyclerView.Adapter<RecyclerViewDocentesAdapter.ViewHolder>() {
 
-    private var reallyListDocentes = docentes.toMutableList()
+    val clipboardManager: ClipboardManager? by inject(ClipboardManager::class.java)
+    private var reallyListDocentes = docentes.toMutableList().sortedBy { it.name }
 
     @SuppressLint("DefaultLocale")
     fun filter(searchTerm: String) {
-        val key = searchTerm.toLowerCase().capitalize()
+        val key = searchTerm.toLowerCase()
         reallyListDocentes = docentes.filter { docente ->
-            val nome = docente.name
-            val comparacao = nome?.startsWith(key) ?: false
+            val nome = docente.name?.toLowerCase()
+            val comparacao = nome?.contains(key) ?: false
             comparacao
-        }.toMutableList()
+        }.toMutableList().sortedBy { it.name }
         notifyDataSetChanged()
     }
 
@@ -44,6 +49,12 @@ class RecyclerViewDocentesAdapter(private val docentes: List<Docente>) :
         viewHolder.tvDocenteName.text = docente.name
         viewHolder.tvDocenteEmail.text = docente.email
         viewHolder.tvDocenteDepartment.text = docente.departmentCode
+        viewHolder.itemView.setOnClickListener {
+            val clip = ClipData.newPlainText("Canal de ClipData", docente.email)
+            clipboardManager?.setPrimaryClip(clip)
+            Snackbar.make(viewHolder.itemView, "${docente.email} copiado!", Snackbar.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun getItemCount() = reallyListDocentes.size
