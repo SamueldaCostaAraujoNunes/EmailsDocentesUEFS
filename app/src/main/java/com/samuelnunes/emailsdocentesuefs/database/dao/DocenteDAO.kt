@@ -3,6 +3,7 @@ package com.samuelnunes.emailsdocentesuefs.database.dao
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.samuelnunes.emailsdocentesuefs.database.DAO
+import com.samuelnunes.emailsdocentesuefs.database.DOCENTES_PATH
 import com.samuelnunes.emailsdocentesuefs.extensions.asFlow
 import com.samuelnunes.emailsdocentesuefs.extensions.await
 import com.samuelnunes.emailsdocentesuefs.model.Docente
@@ -10,8 +11,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
-const val DOCENTES_PATH = "docentes"
 
 @ExperimentalCoroutinesApi
 class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
