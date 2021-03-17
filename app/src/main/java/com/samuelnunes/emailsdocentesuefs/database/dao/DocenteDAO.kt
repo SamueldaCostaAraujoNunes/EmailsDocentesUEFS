@@ -1,6 +1,7 @@
 package com.samuelnunes.emailsdocentesuefs.database.dao
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.samuelnunes.emailsdocentesuefs.database.DAO
 import com.samuelnunes.emailsdocentesuefs.extensions.asFlow
 import com.samuelnunes.emailsdocentesuefs.extensions.await
@@ -18,6 +19,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
 
     override fun read(): Flow<List<Docente>> {
         return collection
+            .orderBy("name", Query.Direction.ASCENDING)
             .asFlow()
             .map { it.toObjects(Docente::class.java) }
     }

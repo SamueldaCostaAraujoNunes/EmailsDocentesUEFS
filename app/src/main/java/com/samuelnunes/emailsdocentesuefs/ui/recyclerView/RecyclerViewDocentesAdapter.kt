@@ -18,7 +18,7 @@ class RecyclerViewDocentesAdapter(private val docentes: List<Docente>) :
     RecyclerView.Adapter<RecyclerViewDocentesAdapter.ViewHolder>() {
 
     val clipboardManager: ClipboardManager? by inject(ClipboardManager::class.java)
-    private var reallyListDocentes = docentes.toMutableList().sortedBy { it.name }
+    private var reallyListDocentes = docentes.toMutableList()
 
     @SuppressLint("DefaultLocale")
     fun filter(searchTerm: String) {
@@ -27,7 +27,7 @@ class RecyclerViewDocentesAdapter(private val docentes: List<Docente>) :
             val nome = docente.name?.toLowerCase()
             val comparacao = nome?.contains(key) ?: false
             comparacao
-        }.toMutableList().sortedBy { it.name }
+        }.toMutableList()
         notifyDataSetChanged()
     }
 
