@@ -12,17 +12,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
-private const val TITLE_NAME = "Docentes"
+private const val TITLE_NAME = "Emails Docentes"
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModel()
-//    private var adapter: RecyclerViewDocentesAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = TITLE_NAME
+//        AdmobAdvertisement(this).createBanner(findViewById(R.id.adViewGroup), R.string.admob_banner_id_test, AdmobAdvertisement.BANNER)
     }
 
     fun getForegroundFragment(): Fragment? {

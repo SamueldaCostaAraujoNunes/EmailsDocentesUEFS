@@ -45,7 +45,7 @@ class ListDocentesFragment : Fragment() {
     private fun buscaDocentes(view: View) {
 
         viewModel.buscaTodos().observe(requireActivity(), Observer { data ->
-            adapter = RecyclerViewDocentesAdapter(data)
+            adapter = RecyclerViewDocentesAdapter(requireContext(), data.toMutableList())
             view.findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
         })
     }

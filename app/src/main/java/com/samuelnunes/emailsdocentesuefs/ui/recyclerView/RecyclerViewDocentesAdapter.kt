@@ -3,60 +3,121 @@ package com.samuelnunes.emailsdocentesuefs.ui.recyclerView
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdSize
 import com.google.android.material.snackbar.Snackbar
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.model.Docente
 import org.koin.java.KoinJavaComponent.inject
 
+private const val ITEM_TYPE_DOCENTE = 0
+private const val ITEM_TYPE_BANNER_AD = 1
+private const val ITEM_TYPE_OTHER = 2
 
-class RecyclerViewDocentesAdapter(private val docentes: List<Docente>) :
+class RecyclerViewDocentesAdapter(
+    private val context: Context,
+    private val docentes: MutableList<Docente>
+) :
     RecyclerView.Adapter<RecyclerViewDocentesAdapter.ViewHolder>() {
 
-    val clipboardManager: ClipboardManager? by inject(ClipboardManager::class.java)
-    private var reallyListDocentes = docentes.toMutableList()
+    private val clipboardManager: ClipboardManager? by inject(ClipboardManager::class.java)
+    private var reallyListDocentes: MutableList<Any> = docentes.toMutableList()
+    private val itemsPerAd = 13
+
+    init {
+        addAdMobBannerAds()
+    }
+
+    private fun addAdMobBannerAds() {
+        var count = 0
+        while (count <= reallyListDocentes.size) {
+            reallyListDocentes.add(
+                count,
+                context.resources.getString(R.string.admob_banner_id_test)
+            )
+            count += (itemsPerAd + 1)
+        }
+    }
 
     @SuppressLint("DefaultLocale")
     fun filter(searchTerm: String) {
         val key = searchTerm.toLowerCase()
-        reallyListDocentes = docentes.filter { docente ->
+        this.reallyListDocentes = docentes.filter { docente ->
             val nome = docente.name?.toLowerCase()
             val comparacao = nome?.contains(key) ?: false
             comparacao
         }.toMutableList()
+        addAdMobBannerAds()
         notifyDataSetChanged()
     }
 
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvDocenteName: TextView = view.findViewById(R.id.item_docente_name)
-        val tvDocenteEmail: TextView = view.findViewById(R.id.item_docente_email)
-        val tvDocenteDepartment: TextView = view.findViewById(R.id.item_docente_depatarment_code)
-    }
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_docente, viewGroup, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val docente = reallyListDocentes[position]
-        viewHolder.tvDocenteName.text = docente.name
-        viewHolder.tvDocenteEmail.text = docente.email
-        viewHolder.tvDocenteDepartment.text = docente.departmentCode
-        viewHolder.itemView.setOnClickListener {
-            val clip = ClipData.newPlainText("Canal de ClipData", docente.email)
-            clipboardManager?.setPrimaryClip(clip)
-            Snackbar.make(viewHolder.itemView, "${docente.email} copiado!", Snackbar.LENGTH_SHORT)
-                .show()
+    override fun getItemViewType(position: Int): Int {
+        return when (reallyListDocentes[position]) {
+            is Docente -> ITEM_TYPE_DOCENTE
+            is String -> ITEM_TYPE_BANNER_AD
+            else -> ITEM_TYPE_OTHER
         }
     }
 
-    override fun getItemCount() = reallyListDocentes.size
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            ITEM_TYPE_BANNER_AD -> {
+                AdMobViewHolder(ItemRecyclerAdMob(viewGroup.context))
+            }
+            ITEM_TYPE_DOCENTE -> {
+                val view = LayoutInflater.from(viewGroup.context)
+                    .inflate(R.layout.item_docente, viewGroup, false)
+                DocenteViewHolder(view)
+            }
+            else -> {
+                val view = LayoutInflater.from(viewGroup.context)
+                    .inflate(R.layout.item_docente, viewGroup, false)
+                ViewHolder(view)
+            }
+        }
+    }
 
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        when (viewHolder) {
+            is AdMobViewHolder -> {
+                (viewHolder.itemView as ItemRecyclerAdMob).loadBanner()
+            }
+            is DocenteViewHolder -> {
+                val docente = this.reallyListDocentes[position] as Docente
+                viewHolder.tvDocenteName.text = docente.name
+                viewHolder.tvDocenteEmail.text = docente.email
+                viewHolder.tvDocenteDepartment.text = docente.departmentCode
+                viewHolder.itemView.setOnClickListener {
+                    val clip = ClipData.newPlainText("Canal de ClipData", docente.email)
+                    clipboardManager?.setPrimaryClip(clip)
+                    Snackbar.make(
+                        viewHolder.itemView,
+                        "${docente.email} copiado!",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    override fun getItemCount() = this.reallyListDocentes.size
+
+    open inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+    inner class DocenteViewHolder(view: View) : ViewHolder(view) {
+        var tvDocenteName: TextView = view.findViewById(R.id.item_docente_name)
+        var tvDocenteEmail: TextView = view.findViewById(R.id.item_docente_email)
+        var tvDocenteDepartment: TextView = view.findViewById(R.id.item_docente_depatarment_code)
+    }
+
+    inner class AdMobViewHolder(view: ItemRecyclerAdMob) : ViewHolder(view) {
+        init {
+            view.createBanner(R.string.admob_banner_id_test, AdSize.FULL_BANNER)
+        }
+    }
 }
