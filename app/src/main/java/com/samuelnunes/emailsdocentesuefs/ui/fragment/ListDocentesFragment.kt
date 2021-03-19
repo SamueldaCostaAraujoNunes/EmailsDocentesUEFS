@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.ui.recyclerView.RecyclerViewDocentesAdapter
@@ -31,16 +30,16 @@ class ListDocentesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buscaDocentes(view)
-        createFab(view)
+//        createFab(view)
     }
 
-    private fun createFab(view: View) {
-        val fab: View = view.findViewById(R.id.fab)
-        fab.setOnClickListener {
-            val controlador = findNavController()
-            controlador.navigate(R.id.adicionaOuEditaDocenteFragment)
-        }
-    }
+//    private fun createFab(view: View) {
+//        val fab: View = view.findViewById(R.id.fab)
+//        fab.setOnClickListener {
+//            val controlador = findNavController()
+//            controlador.navigate(R.id.adicionaOuEditaDocenteFragment)
+//        }
+//    }
 
     private fun buscaDocentes(view: View) {
         adapter = RecyclerViewDocentesAdapter()

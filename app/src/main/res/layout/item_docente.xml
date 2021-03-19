@@ -8,11 +8,11 @@
     android:layout_gravity="center_horizontal"
     android:layout_marginHorizontal="@dimen/margin_item_horizontal"
     android:layout_marginVertical="@dimen/margin_item_vertical"
-    android:backgroundTint="#ffffff"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:foreground="?selectableItemBackground"
     card_view:cardCornerRadius="8dp"
+    card_view:cardBackgroundColor="#FFFFFF"
     card_view:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

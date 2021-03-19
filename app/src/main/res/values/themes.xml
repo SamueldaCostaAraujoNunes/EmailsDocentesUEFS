@@ -8,5 +8,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorOnPrimary">@color/colorGray</item>
+        <item name="colorControlHighlight">@color/colorGray</item>
     </style>
 </resources>
