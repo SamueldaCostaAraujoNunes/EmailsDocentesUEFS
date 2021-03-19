@@ -7,10 +7,9 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.samuelnunes.emailsdocentesuefs.BuildConfig
-import com.samuelnunes.emailsdocentesuefs.R
 
 class AdmobAdvertisement(val context: Context) {
-    lateinit var adView: AdView
+    private lateinit var adView: AdView
 
     init {
         MobileAds.initialize(context)
@@ -31,7 +30,7 @@ class AdmobAdvertisement(val context: Context) {
         adView = AdView(context)
         adView.adSize = size
         adView.adUnitId = if (BuildConfig.DEBUG) {
-            context.getString(R.string.admob_banner_id_test)
+            "ca-app-pub-3940256099942544/6300978111"
         } else {
             context.getString(idAdMob)
         }

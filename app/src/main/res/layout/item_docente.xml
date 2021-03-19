@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_marginHorizontal="@dimen/margin_item_horizontal"
-    android:layout_marginVertical="@dimen/margin_item_vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
+    android:layout_marginHorizontal="@dimen/margin_item_horizontal"
+    android:layout_marginVertical="@dimen/margin_item_vertical"
+    android:backgroundTint="#ffffff"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
@@ -22,9 +23,9 @@
         <TextView
             android:id="@+id/item_docente_name"
             android:layout_width="match_parent"
-            android:textSize="20sp"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorPrimaryVariant"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +35,7 @@
             android:id="@+id/item_docente_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnPrimary"
             app:layout_constraintTop_toBottomOf="@+id/item_docente_name"
             tools:text="Email Docente" />
 
@@ -41,6 +43,7 @@
             android:id="@+id/item_docente_depatarment_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnPrimary"
             app:layout_constraintTop_toBottomOf="@+id/item_docente_email"
             tools:text="Departamento Code" />
     </androidx.constraintlayout.widget.ConstraintLayout>

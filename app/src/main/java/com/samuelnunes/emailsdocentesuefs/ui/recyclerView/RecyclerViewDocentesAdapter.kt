@@ -3,7 +3,6 @@ package com.samuelnunes.emailsdocentesuefs.ui.recyclerView
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,41 +18,23 @@ private const val ITEM_TYPE_DOCENTE = 0
 private const val ITEM_TYPE_BANNER_AD = 1
 private const val ITEM_TYPE_OTHER = 2
 
-class RecyclerViewDocentesAdapter(
-    private val context: Context,
-    private val docentes: MutableList<Docente>
-) :
+class RecyclerViewDocentesAdapter(private var docentes: List<Docente> = listOf()) :
     RecyclerView.Adapter<RecyclerViewDocentesAdapter.ViewHolder>() {
 
     private val clipboardManager: ClipboardManager? by inject(ClipboardManager::class.java)
     private var reallyListDocentes: MutableList<Any> = docentes.toMutableList()
     private val itemsPerAd = 13
+    private var filterCache = ""
+
+    var data: List<Docente>
+        get() = docentes
+        set(value) {
+            docentes = value
+            filter()
+        }
 
     init {
         addAdMobBannerAds()
-    }
-
-    private fun addAdMobBannerAds() {
-        var count = 0
-        while (count <= reallyListDocentes.size) {
-            reallyListDocentes.add(
-                count,
-                context.resources.getString(R.string.admob_banner_id_test)
-            )
-            count += (itemsPerAd + 1)
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
-    fun filter(searchTerm: String) {
-        val key = searchTerm.toLowerCase()
-        this.reallyListDocentes = docentes.filter { docente ->
-            val nome = docente.name?.toLowerCase()
-            val comparacao = nome?.contains(key) ?: false
-            comparacao
-        }.toMutableList()
-        addAdMobBannerAds()
-        notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -107,6 +88,32 @@ class RecyclerViewDocentesAdapter(
 
     override fun getItemCount() = this.reallyListDocentes.size
 
+    private fun addAdMobBannerAds() {
+        var count = 0
+        while (count <= reallyListDocentes.size) {
+            reallyListDocentes.add(
+                count,
+                "banner"
+            )
+            count += (itemsPerAd + 1)
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    fun filter(searchTerm: String? = filterCache) {
+        if (searchTerm != null || searchTerm != "") {
+            val key = searchTerm!!.toLowerCase()
+            reallyListDocentes = docentes.filter { docente ->
+                val nome = docente.name?.toLowerCase()
+                val comparacao = nome?.contains(key) ?: false
+                comparacao
+            }.toMutableList()
+            addAdMobBannerAds()
+            notifyDataSetChanged()
+        }
+        filterCache = searchTerm
+    }
+
     open inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     inner class DocenteViewHolder(view: View) : ViewHolder(view) {
@@ -117,7 +124,7 @@ class RecyclerViewDocentesAdapter(
 
     inner class AdMobViewHolder(view: ItemRecyclerAdMob) : ViewHolder(view) {
         init {
-            view.createBanner(R.string.admob_banner_id_test, AdSize.FULL_BANNER)
+            view.createBanner(R.string.admob_banner_id, AdSize.FULL_BANNER)
         }
     }
 }

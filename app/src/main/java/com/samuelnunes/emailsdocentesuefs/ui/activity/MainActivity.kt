@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = TITLE_NAME
-//        AdmobAdvertisement(this).createBanner(findViewById(R.id.adViewGroup), R.string.admob_banner_id_test, AdmobAdvertisement.BANNER)
     }
 
     fun getForegroundFragment(): Fragment? {
