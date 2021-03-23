@@ -10,4 +10,5 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class ListDocentesFragmentViewModel(private val repository: DocenteRepository) : ViewModel() {
 
     fun buscaTodos(): LiveData<List<Docente>> = repository.buscaTodos()
+
 }

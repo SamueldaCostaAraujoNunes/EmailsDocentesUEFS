@@ -10,6 +10,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class DocenteRepository(private val dao: DocenteDAO) {
 
+    private val data = dao.read().asLiveData()
 
-    fun buscaTodos(): LiveData<List<Docente>> = dao.read().asLiveData()
+    fun buscaTodos(): LiveData<List<Docente>> = data
+    fun buscaPorId(docenteId: String): Docente? {
+        return data.value?.find { docente -> docente.id == docenteId }
+    }
 }

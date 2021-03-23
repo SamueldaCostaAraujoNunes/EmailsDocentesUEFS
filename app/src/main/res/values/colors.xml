@@ -6,4 +6,5 @@
     <color name="colorPrimaryDark">#00366C</color>
     <color name="colorAccent">#E91114</color>
     <color name="colorGray">#757575</color>
+    <color name="colorAlert">#F1135C</color>
 </resources>

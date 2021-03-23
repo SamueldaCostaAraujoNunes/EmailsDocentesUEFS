@@ -1,7 +1,5 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme.EmailsDocentesUEFS" parent="Theme.AppCompat">
-        <!-- Customize your theme here. -->
+    <style name="Theme.EmailsDocentesUEFS" parent="Theme.MaterialComponents.Light">
         <item name="colorPrimarySurface">@color/colorPrimarySurface</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
@@ -9,5 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorOnPrimary">@color/colorGray</item>
         <item name="colorControlHighlight">@color/colorGray</item>
+        <item name="colorError">@color/colorAlert</item>
+        <item name="toolbarStyle">@style/CustomToolBarStyle</item>
     </style>
+
 </resources>

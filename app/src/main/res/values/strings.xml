@@ -1,8 +1,33 @@
 <resources>
-    <string name="app_name">Emails do Docentes UEFS</string>
+    <string name="app_name">Emails dos Docentes UEFS</string>
     <string name="nome">Nome</string>
     <string name="email">Email</string>
     <string name="add_docente">Add Docente</string>
     <string name="salvar">Salvar</string>
     <string name="search">Search</string>
+    <string name="departamento">Departamento</string>
+    <string name="atualizar">Atualizar</string>
+
+    <string-array name="departmentsCode">
+        <item>DEXA</item>
+        <item>DZOO</item>
+        <item>DBIOT</item>
+        <item>DTEC</item>
+        <item>DMEL</item>
+        <item>DEDU</item>
+        <item>DECEA</item>
+        <item>DCIS</item>
+        <item>DLIT</item>
+        <item>DMCTA</item>
+        <item>DDCI</item>
+        <item>DLET</item>
+        <item>DBIO</item>
+        <item>DCAP</item>
+        <item>DBOT</item>
+        <item>DPLA</item>
+        <item>DFIS</item>
+        <item>DRGV</item>
+        <item>DCHF</item>
+        <item>DSAU</item>
+    </string-array>
 </resources>

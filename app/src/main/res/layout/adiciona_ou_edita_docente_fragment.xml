@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimarySurface"
     tools:context=".ui.fragment.AdicionaOuEditaDocenteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,47 +13,97 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-
-        <Button
-            android:id="@+id/btn_signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:text="@string/salvar"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="60dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_email" />
-
-        <EditText
-            android:id="@+id/input_name"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_name_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:hint="@string/nome"
-            android:singleLine="true"
-            app:layout_constraintBottom_toTopOf="@+id/input_email"
+            android:layout_marginHorizontal="20dp"
+            android:theme="@style/TextInputLayoutAppearance"
+            app:boxBackgroundColor="#ffffff"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@+id/input_email_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:inputType="textPersonName"
-            android:autofillHints="AUTOFILL_HINT_PERSON_NAME" />
+            app:startIconContentDescription="Nome"
+            app:startIconDrawable="@drawable/ic_baseline_person_24"
+            app:startIconTint="@color/colorGray">
 
-        <EditText
-            android:id="@+id/input_email"
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="AUTOFILL_HINT_PERSON_NAME"
+                android:hint="@string/nome"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
+            android:layout_marginHorizontal="20dp"
+            android:theme="@style/TextInputLayoutAppearance"
+            app:boxBackgroundColor="#ffffff"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_name"
             app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="65dp"
-            android:autofillHints="username" />
+            app:layout_constraintTop_toBottomOf="@id/input_name_layout"
+            app:startIconContentDescription="Email"
+            app:startIconDrawable="@drawable/ic_baseline_email_24"
+            app:startIconTint="@color/colorGray">
+            <!--            android:visibility="gone"-->
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="username"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_department_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:theme="@style/TextInputLayoutAppearance.ExposedDropdownMenu"
+            app:boxBackgroundColor="#ffffff"
+            app:errorEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_email_layout"
+            app:startIconContentDescription="Departamento"
+            app:startIconDrawable="@drawable/ic_baseline_business_24"
+            app:startIconTint="@color/colorGray">
+
+            <AutoCompleteTextView
+                android:id="@+id/input_department"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/departamento"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_save_docente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="60dp"
+            android:background="?attr/colorPrimary"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_department_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="@string/salvar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
