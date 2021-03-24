@@ -9,9 +9,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import com.samuelnunes.emailsdocentesuefs.R
+import com.samuelnunes.emailsdocentesuefs.extensions.isValidEmail
+import com.samuelnunes.emailsdocentesuefs.model.Departamento
+import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.ui.activity.CHAVE_DOCENTE_ID
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.AdicionaOuEditaDocenteViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +36,7 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     private lateinit var textInputLayoutEmail: TextInputLayout
     private lateinit var textInputLayoutDepartmento: TextInputLayout
     private lateinit var btnSave: Button
-
+    private lateinit var docenteCurrent: Docente
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,21 +48,91 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instanciaTextInputs(view)
-        if (docenteID.isNullOrEmpty()) {
+        docenteCurrent = viewModel.docente
+        if (docenteCurrent.id.isNullOrEmpty()) {
             textInputLayoutEmail.visibility = GONE
             btnSave.text = resources.getString(R.string.salvar)
         } else {
             textInputLayoutEmail.visibility = VISIBLE
             btnSave.text = resources.getString(R.string.atualizar)
-            val docente = viewModel.docente
-            if (docente != null) {
-                textInputLayoutName.editText!!.setText(docente.name)
-                textInputLayoutEmail.editText!!.setText(docente.email)
-                textInputLayoutDepartmento.editText!!.setText(docente.departmentCode)
+        }
+        textInputLayoutName.editText!!.setText(docenteCurrent.name)
+        textInputLayoutEmail.editText!!.setText(docenteCurrent.email)
+        textInputLayoutDepartmento.editText!!.setText(docenteCurrent.departmentCode)
+        createAutoCompleteDepartamentos()
+        createClickListener()
+    }
+
+    private fun createClickListener() {
+        btnSave.setOnClickListener { confirmInput() }
+    }
+
+    private fun confirmInput() {
+        if (validateName() && validateDepartamento()) {
+            val name = textInputLayoutName.editText!!.text.toString()
+            val departmentCode = textInputLayoutDepartmento.editText!!.text.toString()
+            val departmentName = Departamento.departamentoHashMap[departmentCode]
+            val id = docenteID
+            var email: String? = null
+            if (textInputLayoutEmail.isVisible) {
+                if (validateEmail()) {
+                    email = textInputLayoutEmail.editText!!.text.toString()
+                } else {
+                    return
+                }
+            }
+            val docente = Docente(name, email, departmentCode, departmentName, id)
+
+            if (docente != docenteCurrent) {
+                viewModel.createDocente(docente)
+            }
+            findNavController().popBackStack()
+        } else {
+            return
+        }
+
+    }
+
+    private fun validateEmail(): Boolean {
+        val emailInput: String = textInputLayoutEmail.editText!!.text.toString().trim()
+        return when {
+            emailInput.isEmpty() -> {
+                textInputLayoutEmail.error = "Campo Vazio!!"
+                false
+            }
+            !emailInput.isValidEmail() -> {
+                textInputLayoutEmail.error = "Email Inválido!!"
+                false
+            }
+            else -> {
+                textInputLayoutEmail.error = null
+                true
             }
         }
-        createAutoCompleteDepartamentos()
     }
+
+    private fun validateName(): Boolean {
+        val usernameInput: String = textInputLayoutName.editText!!.text.toString().trim()
+        return if (usernameInput.isEmpty()) {
+            textInputLayoutName.error = "Campo Vazio!!"
+            false
+        } else {
+            textInputLayoutName.error = null
+            true
+        }
+    }
+
+    private fun validateDepartamento(): Boolean {
+        val departamentoInput: String = textInputLayoutDepartmento.editText!!.text.toString().trim()
+        return if (departamentoInput.isEmpty()) {
+            textInputLayoutDepartmento.error = "Campo Vazio!!"
+            false
+        } else {
+            textInputLayoutDepartmento.error = null
+            true
+        }
+    }
+
 
     private fun instanciaTextInputs(view: View) {
         textInputLayoutName = view.findViewById(R.id.input_name_layout)
@@ -67,7 +142,7 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     }
 
     private fun createAutoCompleteDepartamentos() {
-        val departamentos = resources.getStringArray(R.array.departmentsCode)
+        val departamentos: List<String> = Departamento.departamentoHashMap.keys.toList()
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_departament, departamentos)
         val departamentAutoComplete = textInputLayoutDepartmento.editText as AutoCompleteTextView
         departamentAutoComplete.setAdapter(adapter)

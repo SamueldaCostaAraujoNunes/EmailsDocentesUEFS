@@ -3,6 +3,7 @@ package com.samuelnunes.emailsdocentesuefs.di
 import android.content.ClipboardManager
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteAdminDAO
 import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteDAO
 import com.samuelnunes.emailsdocentesuefs.repository.DocenteRepository
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.AdicionaOuEditaDocenteViewModel
@@ -19,6 +20,7 @@ val databaseModule = module {
 @ExperimentalCoroutinesApi
 val daoModule = module {
     single<DocenteDAO> { DocenteDAO(get()) }
+    single<DocenteAdminDAO> { (collection: String) -> DocenteAdminDAO(get(), collection) }
 }
 
 @ExperimentalCoroutinesApi

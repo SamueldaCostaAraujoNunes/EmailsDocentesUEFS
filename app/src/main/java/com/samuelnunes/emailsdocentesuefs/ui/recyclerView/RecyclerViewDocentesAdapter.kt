@@ -90,10 +90,12 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
                         "${docente.email} copiado!",
                         Snackbar.LENGTH_SHORT
                     ).show()
-
+                }
+                viewHolder.itemView.setOnLongClickListener {
                     val bundle = Bundle()
                     bundle.putString(CHAVE_DOCENTE_ID, docente.id)
                     notFoundDocente(bundle)
+                    true
                 }
             }
             is BtnNaoEncontradoViewHolder -> {

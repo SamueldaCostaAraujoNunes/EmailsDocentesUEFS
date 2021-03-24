@@ -16,4 +16,6 @@ class DocenteRepository(private val dao: DocenteDAO) {
     fun buscaPorId(docenteId: String): Docente? {
         return data.value?.find { docente -> docente.id == docenteId }
     }
+
+    suspend fun addDocente(docente: Docente) = dao.create(docente)
 }

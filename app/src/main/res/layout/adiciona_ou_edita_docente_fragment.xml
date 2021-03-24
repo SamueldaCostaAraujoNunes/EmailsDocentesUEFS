@@ -55,7 +55,6 @@
             app:startIconContentDescription="Email"
             app:startIconDrawable="@drawable/ic_baseline_email_24"
             app:startIconTint="@color/colorGray">
-            <!--            android:visibility="gone"-->
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_email"

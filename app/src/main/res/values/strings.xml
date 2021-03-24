@@ -7,27 +7,4 @@
     <string name="search">Search</string>
     <string name="departamento">Departamento</string>
     <string name="atualizar">Atualizar</string>
-
-    <string-array name="departmentsCode">
-        <item>DEXA</item>
-        <item>DZOO</item>
-        <item>DBIOT</item>
-        <item>DTEC</item>
-        <item>DMEL</item>
-        <item>DEDU</item>
-        <item>DECEA</item>
-        <item>DCIS</item>
-        <item>DLIT</item>
-        <item>DMCTA</item>
-        <item>DDCI</item>
-        <item>DLET</item>
-        <item>DBIO</item>
-        <item>DCAP</item>
-        <item>DBOT</item>
-        <item>DPLA</item>
-        <item>DFIS</item>
-        <item>DRGV</item>
-        <item>DCHF</item>
-        <item>DSAU</item>
-    </string-array>
 </resources>

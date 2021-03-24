@@ -4,8 +4,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.samuelnunes.emailsdocentesuefs.database.DAO
 import com.samuelnunes.emailsdocentesuefs.database.DOCENTES_COLLECTION
-import com.samuelnunes.emailsdocentesuefs.database.DOCENTES_CRIADOS_COLLECTION
-import com.samuelnunes.emailsdocentesuefs.database.DOCENTES_EDITADOS_COLLECTION
 import com.samuelnunes.emailsdocentesuefs.extensions.asFlow
 import com.samuelnunes.emailsdocentesuefs.extensions.await
 import com.samuelnunes.emailsdocentesuefs.model.Docente
@@ -13,48 +11,29 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
 @ExperimentalCoroutinesApi
-class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
+class DocenteAdminDAO(firebase: FirebaseFirestore, collection: String) : DAO<Docente> {
     private val collectionDocentesAprovados = firebase.collection(DOCENTES_COLLECTION)
-    private val collectionDocentesEditadosPendentes =
-        firebase.collection(DOCENTES_EDITADOS_COLLECTION)
-    private val collectionDocentesCriadosPendentes =
-        firebase.collection(DOCENTES_CRIADOS_COLLECTION)
+    private val collection = firebase.collection(collection)
 
     override fun read(): Flow<List<Docente>> {
-        return collectionDocentesAprovados
+        return collection
             .orderBy("name", Query.Direction.ASCENDING)
             .asFlow()
             .map { it.toObjects(Docente::class.java) }
     }
 
     override suspend fun create(element: Docente) {
-        if (element.id == null) {
-            add(element)
-        } else {
-            update(element)
-        }
-    }
-
-    private suspend fun add(element: Docente): Docente? {
-        return try {
-            val docenteAdicionado = collectionDocentesCriadosPendentes.add(element).await()
-            if (docenteAdicionado != null) {
-                element.id = docenteAdicionado.id
-            }
-            element
-        } catch (e: Exception) {
-            null
-        }
+        update(element)
     }
 
     private suspend fun update(element: Docente): Docente? {
         return try {
-            collectionDocentesEditadosPendentes
+            collectionDocentesAprovados
                 .document(element.id.toString())
                 .set(element)
                 .await()
+            delete(element)
             element
         } catch (e: Exception) {
             null
@@ -63,7 +42,7 @@ class DocenteDAO(firebase: FirebaseFirestore) : DAO<Docente> {
 
     override suspend fun delete(element: Docente): Docente? {
         return try {
-            collectionDocentesAprovados
+            collection
                 .document(element.id.toString())
                 .delete()
                 .await()

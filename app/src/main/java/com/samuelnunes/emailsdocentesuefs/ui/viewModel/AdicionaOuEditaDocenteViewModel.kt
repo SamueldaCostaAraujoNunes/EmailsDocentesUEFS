@@ -1,17 +1,22 @@
 package com.samuelnunes.emailsdocentesuefs.ui.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.repository.DocenteRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class AdicionaOuEditaDocenteViewModel(
-    docenteId: String,
+    private val docenteId: String?,
     private val repository: DocenteRepository
 ) : ViewModel() {
 
-    @ExperimentalCoroutinesApi
-    val docente: Docente? = repository.buscaPorId(docenteId)
-//    fun addDocente(docente: Docente) = repository.addDocente(docente)
+    val docente: Docente = docenteId?.let { repository.buscaPorId(it) } ?: Docente()
+
+    fun createDocente(docente: Docente) {
+        viewModelScope.launch { repository.addDocente(docente) }
+    }
 
 }
