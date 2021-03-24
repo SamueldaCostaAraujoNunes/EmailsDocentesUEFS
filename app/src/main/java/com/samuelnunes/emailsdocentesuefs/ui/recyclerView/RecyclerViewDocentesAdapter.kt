@@ -9,7 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.android.material.snackbar.Snackbar
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.model.Docente
@@ -52,7 +53,9 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
             ITEM_TYPE_BANNER_AD -> {
-                AdMobViewHolder(ItemRecyclerAdMob(viewGroup.context))
+                val view = LayoutInflater.from(viewGroup.context)
+                    .inflate(R.layout.item_admob, viewGroup, false)
+                AdMobViewHolder(view)
             }
             ITEM_TYPE_DOCENTE -> {
                 val view = LayoutInflater.from(viewGroup.context)
@@ -75,7 +78,8 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         when (viewHolder) {
             is AdMobViewHolder -> {
-                (viewHolder.itemView as ItemRecyclerAdMob).loadBanner()
+                val adRequest: AdRequest = AdRequest.Builder().build()
+                viewHolder.mAdView.loadAd(adRequest)
             }
             is DocenteViewHolder -> {
                 val docente = this.reallyListDocentes[position] as Docente
@@ -152,10 +156,8 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
         var tvDocenteDepartment: TextView = view.findViewById(R.id.item_docente_depatarment_code)
     }
 
-    inner class AdMobViewHolder(view: ItemRecyclerAdMob) : ViewHolder(view) {
-        init {
-            view.createBanner(R.string.admob_banner_id, AdSize.FULL_BANNER)
-        }
+    inner class AdMobViewHolder(view: View) : ViewHolder(view) {
+        val mAdView: AdView = view.findViewById(R.id.adView)
     }
 
     inner class BtnNaoEncontradoViewHolder(view: View) : ViewHolder(view) {
