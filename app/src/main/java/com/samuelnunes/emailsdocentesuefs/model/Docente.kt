@@ -6,7 +6,7 @@ data class Docente(
     val name: String? = null,
     val email: String? = null,
     val departmentCode: String? = null,
-    val departmentName: String? = null,
+    var departmentName: String? = null,
     @DocumentId
     var id: String? = null
 ) {

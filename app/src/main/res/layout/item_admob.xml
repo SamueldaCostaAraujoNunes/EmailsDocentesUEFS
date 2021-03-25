@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_marginHorizontal="@dimen/margin_item_horizontal"
-    android:layout_marginVertical="@dimen/margin_item_vertical"
-    card_view:cardBackgroundColor="#FFFFFF"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp">
 
-    <RelativeLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/advertisementParent"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:orientation="horizontal">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margin_item_horizontal"
+        android:layout_marginVertical="@dimen/margin_item_vertical"
+        card_view:cardBackgroundColor="#FFFFFF"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardElevation="4dp">
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/advertisementParent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:backgroundTint="@android:color/transparent"
-            ads:adSize="FULL_BANNER"
-            ads:adUnitId="@string/admob_banner_id"></com.google.android.gms.ads.AdView>
-    </RelativeLayout>
+            android:orientation="horizontal">
 
-</androidx.cardview.widget.CardView>
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@android:color/transparent"
+                ads:adSize="FULL_BANNER"
+                ads:adUnitId="@string/admob_banner_id">
+
+            </com.google.android.gms.ads.AdView>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>
+

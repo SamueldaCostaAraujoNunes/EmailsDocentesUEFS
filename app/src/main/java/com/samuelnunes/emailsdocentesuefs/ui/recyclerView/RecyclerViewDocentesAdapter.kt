@@ -5,14 +5,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.material.snackbar.Snackbar
-import com.samuelnunes.emailsdocentesuefs.R
+import com.samuelnunes.emailsdocentesuefs.databinding.ItemAdmobBinding
+import com.samuelnunes.emailsdocentesuefs.databinding.ItemBtnNotFindDocenteBinding
+import com.samuelnunes.emailsdocentesuefs.databinding.ItemDocenteBinding
 import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.ui.activity.CHAVE_DOCENTE_ID
 import org.koin.java.KoinJavaComponent.inject
@@ -53,24 +53,36 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
             ITEM_TYPE_BANNER_AD -> {
-                val view = LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.item_admob, viewGroup, false)
+                val view = ItemAdmobBinding.inflate(
+                    LayoutInflater.from(viewGroup.context),
+                    viewGroup,
+                    false
+                )
                 AdMobViewHolder(view)
             }
             ITEM_TYPE_DOCENTE -> {
-                val view = LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.item_docente, viewGroup, false)
+                val view = ItemDocenteBinding.inflate(
+                    LayoutInflater.from(viewGroup.context),
+                    viewGroup,
+                    false
+                )
                 DocenteViewHolder(view)
             }
             ITEM_TYPE_BTN_NOT_FIND_DOCENTE -> {
-                val view = LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.item_btn_not_find_docente, viewGroup, false)
+                val view = ItemBtnNotFindDocenteBinding.inflate(
+                    LayoutInflater.from(viewGroup.context),
+                    viewGroup,
+                    false
+                )
                 BtnNaoEncontradoViewHolder(view)
             }
             else -> {
-                val view = LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.item_docente, viewGroup, false)
-                ViewHolder(view)
+                val view = ItemDocenteBinding.inflate(
+                    LayoutInflater.from(viewGroup.context),
+                    viewGroup,
+                    false
+                )
+                DocenteViewHolder(view)
             }
         }
     }
@@ -79,13 +91,11 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
         when (viewHolder) {
             is AdMobViewHolder -> {
                 val adRequest: AdRequest = AdRequest.Builder().build()
-                viewHolder.mAdView.loadAd(adRequest)
+                viewHolder.viewBinding.adView.loadAd(adRequest)
             }
             is DocenteViewHolder -> {
                 val docente = this.reallyListDocentes[position] as Docente
-                viewHolder.tvDocenteName.text = docente.name
-                viewHolder.tvDocenteEmail.text = docente.email
-                viewHolder.tvDocenteDepartment.text = docente.departmentCode
+                viewHolder.viewBinding.docente = docente
                 viewHolder.itemView.setOnClickListener {
                     val clip = ClipData.newPlainText("Canal de ClipData", docente.email)
                     clipboardManager?.setPrimaryClip(clip)
@@ -104,7 +114,7 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
             }
             is BtnNaoEncontradoViewHolder -> {
                 val naoEncontrouODocente = "Não encontrou o docente?"
-                viewHolder.tvNotFindDocente.text = naoEncontrouODocente
+                viewHolder.viewBinding.itemTvNotFindDocente.text = naoEncontrouODocente
                 viewHolder.itemView.setOnClickListener { notFoundDocente() }
             }
         }
@@ -148,19 +158,15 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
         }
     }
 
-    open inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    open inner class ViewHolder(open val viewBinding: ViewDataBinding) :
+        RecyclerView.ViewHolder(viewBinding.root)
 
-    inner class DocenteViewHolder(view: View) : ViewHolder(view) {
-        var tvDocenteName: TextView = view.findViewById(R.id.item_docente_name)
-        var tvDocenteEmail: TextView = view.findViewById(R.id.item_docente_email)
-        var tvDocenteDepartment: TextView = view.findViewById(R.id.item_docente_depatarment_code)
-    }
+    inner class DocenteViewHolder(override val viewBinding: ItemDocenteBinding) :
+        ViewHolder(viewBinding)
 
-    inner class AdMobViewHolder(view: View) : ViewHolder(view) {
-        val mAdView: AdView = view.findViewById(R.id.adView)
-    }
+    inner class AdMobViewHolder(override val viewBinding: ItemAdmobBinding) :
+        ViewHolder(viewBinding)
 
-    inner class BtnNaoEncontradoViewHolder(view: View) : ViewHolder(view) {
-        var tvNotFindDocente: TextView = view.findViewById(R.id.item_tv_not_find_docente)
-    }
+    inner class BtnNaoEncontradoViewHolder(override val viewBinding: ItemBtnNotFindDocenteBinding) :
+        ViewHolder(viewBinding)
 }

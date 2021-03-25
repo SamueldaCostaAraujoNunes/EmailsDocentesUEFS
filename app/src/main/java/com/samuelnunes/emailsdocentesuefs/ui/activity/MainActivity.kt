@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.samuelnunes.emailsdocentesuefs.R
+import com.samuelnunes.emailsdocentesuefs.databinding.ActivityMainBinding
 import com.samuelnunes.emailsdocentesuefs.ui.fragment.ListDocentesFragment
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,10 +18,12 @@ private const val TITLE_NAME = "Emails Docentes"
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModel()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
         title = TITLE_NAME
     }
 

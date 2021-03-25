@@ -7,13 +7,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.textfield.TextInputLayout
 import com.samuelnunes.emailsdocentesuefs.R
+import com.samuelnunes.emailsdocentesuefs.databinding.AdicionaOuEditaDocenteFragmentBinding
 import com.samuelnunes.emailsdocentesuefs.extensions.isValidEmail
 import com.samuelnunes.emailsdocentesuefs.model.Departamento
 import com.samuelnunes.emailsdocentesuefs.model.Docente
@@ -30,62 +28,54 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     private val docenteID: String? by lazy {
         arguments?.getString(CHAVE_DOCENTE_ID)
     }
+    private lateinit var binding: AdicionaOuEditaDocenteFragmentBinding
     private val viewModel: AdicionaOuEditaDocenteViewModel by viewModel { parametersOf(docenteID) }
 
-    private lateinit var textInputLayoutName: TextInputLayout
-    private lateinit var textInputLayoutEmail: TextInputLayout
-    private lateinit var textInputLayoutDepartmento: TextInputLayout
-    private lateinit var btnSave: Button
     private lateinit var docenteCurrent: Docente
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.adiciona_ou_edita_docente_fragment, container, false)
+    ): View {
+        binding = AdicionaOuEditaDocenteFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        instanciaTextInputs(view)
-        docenteCurrent = viewModel.docente
-        if (docenteCurrent.id.isNullOrEmpty()) {
-            textInputLayoutEmail.visibility = GONE
-            btnSave.text = resources.getString(R.string.salvar)
-        } else {
-            textInputLayoutEmail.visibility = VISIBLE
-            btnSave.text = resources.getString(R.string.atualizar)
-        }
-        textInputLayoutName.editText!!.setText(docenteCurrent.name)
-        textInputLayoutEmail.editText!!.setText(docenteCurrent.email)
-        textInputLayoutDepartmento.editText!!.setText(docenteCurrent.departmentCode)
+        textFieldFiller()
         createAutoCompleteDepartamentos()
         createClickListener()
     }
 
+    private fun textFieldFiller() {
+        docenteCurrent = viewModel.docente
+        binding.docente = docenteCurrent
+        if (docenteCurrent.id.isNullOrEmpty()) {
+            binding.inputEmailLayout.visibility = GONE
+            binding.btnSaveDocente.text = resources.getString(R.string.salvar)
+        } else {
+            binding.inputEmailLayout.visibility = VISIBLE
+            binding.btnSaveDocente.text = resources.getString(R.string.atualizar)
+        }
+    }
+
     private fun createClickListener() {
-        btnSave.setOnClickListener { confirmInput() }
+        binding.btnSaveDocente.setOnClickListener { confirmInput() }
     }
 
     private fun confirmInput() {
         if (validateName() && validateDepartamento()) {
-            val name = textInputLayoutName.editText!!.text.toString()
-            val departmentCode = textInputLayoutDepartmento.editText!!.text.toString()
-            val departmentName = Departamento.departamentoHashMap[departmentCode]
-            val id = docenteID
-            var email: String? = null
-            if (textInputLayoutEmail.isVisible) {
+            binding.docente!!.departmentName =
+                Departamento.departamentoHashMap[binding.docente!!.departmentCode]
+            if (binding.inputEmailLayout.isVisible) {
                 if (validateEmail()) {
-                    email = textInputLayoutEmail.editText!!.text.toString()
+                    viewModel.createDocente(binding.docente!!)
                 } else {
                     return
                 }
             }
-            val docente = Docente(name, email, departmentCode, departmentName, id)
-
-            if (docente != docenteCurrent) {
-                viewModel.createDocente(docente)
-            }
+            viewModel.createDocente(binding.docente!!)
             findNavController().popBackStack()
         } else {
             return
@@ -94,58 +84,49 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     }
 
     private fun validateEmail(): Boolean {
-        val emailInput: String = textInputLayoutEmail.editText!!.text.toString().trim()
+        val emailInput: String = binding.inputEmail.text.toString().trim()
         return when {
             emailInput.isEmpty() -> {
-                textInputLayoutEmail.error = "Campo Vazio!!"
+                binding.inputEmail.error = "Campo Vazio!!"
                 false
             }
             !emailInput.isValidEmail() -> {
-                textInputLayoutEmail.error = "Email Inválido!!"
+                binding.inputEmail.error = "Email Inválido!!"
                 false
             }
             else -> {
-                textInputLayoutEmail.error = null
+                binding.inputEmail.error = null
                 true
             }
         }
     }
 
     private fun validateName(): Boolean {
-        val usernameInput: String = textInputLayoutName.editText!!.text.toString().trim()
+        val usernameInput: String = binding.inputName.text.toString().trim()
         return if (usernameInput.isEmpty()) {
-            textInputLayoutName.error = "Campo Vazio!!"
+            binding.inputNameLayout.error = "Campo Vazio!!"
             false
         } else {
-            textInputLayoutName.error = null
+            binding.inputNameLayout.error = null
             true
         }
     }
 
     private fun validateDepartamento(): Boolean {
-        val departamentoInput: String = textInputLayoutDepartmento.editText!!.text.toString().trim()
+        val departamentoInput: String = binding.inputDepartment.text.toString().trim()
         return if (departamentoInput.isEmpty()) {
-            textInputLayoutDepartmento.error = "Campo Vazio!!"
+            binding.inputDepartmentLayout.error = "Campo Vazio!!"
             false
         } else {
-            textInputLayoutDepartmento.error = null
+            binding.inputDepartmentLayout.error = null
             true
         }
-    }
-
-
-    private fun instanciaTextInputs(view: View) {
-        textInputLayoutName = view.findViewById(R.id.input_name_layout)
-        textInputLayoutEmail = view.findViewById(R.id.input_email_layout)
-        textInputLayoutDepartmento = view.findViewById(R.id.input_department_layout)
-        btnSave = view.findViewById(R.id.btn_save_docente)
     }
 
     private fun createAutoCompleteDepartamentos() {
         val departamentos: List<String> = Departamento.departamentoHashMap.keys.toList()
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_departament, departamentos)
-        val departamentAutoComplete = textInputLayoutDepartmento.editText as AutoCompleteTextView
-        departamentAutoComplete.setAdapter(adapter)
+        binding.inputDepartment.setAdapter(adapter)
     }
 
 }
