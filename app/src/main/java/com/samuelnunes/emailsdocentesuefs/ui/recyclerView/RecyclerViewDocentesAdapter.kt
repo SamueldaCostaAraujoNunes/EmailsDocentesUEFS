@@ -13,9 +13,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.samuelnunes.emailsdocentesuefs.databinding.ItemAdmobBinding
 import com.samuelnunes.emailsdocentesuefs.databinding.ItemBtnNotFindDocenteBinding
 import com.samuelnunes.emailsdocentesuefs.databinding.ItemDocenteBinding
+import com.samuelnunes.emailsdocentesuefs.extensions.unaccent
 import com.samuelnunes.emailsdocentesuefs.model.Docente
 import com.samuelnunes.emailsdocentesuefs.ui.activity.CHAVE_DOCENTE_ID
 import org.koin.java.KoinJavaComponent.inject
+
 
 private const val ITEM_TYPE_DOCENTE = 0
 private const val ITEM_TYPE_BANNER_AD = 1
@@ -127,9 +129,9 @@ abstract class RecyclerViewDocentesAdapter(private var docentes: List<Docente> =
     @SuppressLint("DefaultLocale")
     fun filter(searchTerm: String? = filterCache) {
         if (searchTerm != null || searchTerm != "") {
-            val key = searchTerm!!.toLowerCase()
+            val key = searchTerm!!.toLowerCase().unaccent()
             reallyListDocentes = docentes.filter { docente ->
-                val nome = docente.name?.toLowerCase()
+                val nome = docente.name?.toLowerCase()?.unaccent()
                 val comparacao = nome?.contains(key) ?: false
                 comparacao
             }.toMutableList()
