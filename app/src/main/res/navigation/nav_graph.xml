@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/listDocentesFragment">
+    app:startDestination="@id/allListOfDocentesFragment">
 
     <fragment
         android:id="@+id/listDocentesFragment"
         android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.ListDocentesFragment"
         android:label="fragment_list_docentes"
-        tools:layout="@layout/fragment_list_docentes" >
+        tools:layout="@layout/fragment_list_docentes">
 
         <action
             android:id="@+id/action_listDocentesFragment_to_adicionaOuEditaDocenteFragment"
@@ -20,6 +20,14 @@
         android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.AdicionaOuEditaDocenteFragment"
         android:label="adiciona_ou_edita_docente_fragment"
         tools:layout="@layout/adiciona_ou_edita_docente_fragment" />
+    <fragment
+        android:id="@+id/allListOfDocentesFragment"
+        android:name="com.samuelnunes.emailsdocentesuefs.ui.fragment.AllListOfDocentesFragment"
+        android:label="AllListOfDocentesFragment">
+        <action
+            android:id="@+id/action_allListOfDocentesFragment_to_listDocentesFragment"
+            app:destination="@id/listDocentesFragment" />
+    </fragment>
 
 
 </navigation>

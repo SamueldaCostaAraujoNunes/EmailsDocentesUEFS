@@ -9,16 +9,28 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.databinding.FragmentListDocentesBinding
+import com.samuelnunes.emailsdocentesuefs.repository.REPOSITORY
+import com.samuelnunes.emailsdocentesuefs.repository.REPOSITORY_PUBLIC
 import com.samuelnunes.emailsdocentesuefs.ui.recyclerView.RecyclerViewDocentesAdapter
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.ListDocentesFragmentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 @ExperimentalCoroutinesApi
-class ListDocentesFragment : Fragment() {
+class ListDocentesFragment(private val typeList: String = REPOSITORY_PUBLIC) : Fragment() {
     private lateinit var binding: FragmentListDocentesBinding
-    private val viewModel: ListDocentesFragmentViewModel by viewModel()
+
+    private val viewModel: ListDocentesFragmentViewModel by viewModel {
+        parametersOf(
+            selectRepository(typeList)
+        )
+    }
     lateinit var adapter: RecyclerViewDocentesAdapter
+
+    fun filter(text: String?) {
+        adapter.filter(text)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +54,7 @@ class ListDocentesFragment : Fragment() {
         adapter = object : RecyclerViewDocentesAdapter() {
             override fun notFoundDocente(bundle: Bundle?) {
                 val controlador = findNavController()
+                bundle?.putString(REPOSITORY, typeList)
                 controlador.navigate(R.id.adicionaOuEditaDocenteFragment, bundle)
             }
         }

@@ -17,4 +17,8 @@ data class Docente(
         departmentName = null,
         id = null
     )
+
+    override fun toString(): String {
+        return "\nName: $name,\nEmail: $email,\nDepartment Code: $departmentCode,\nDepartment Name: $departmentName,\nId: $id"
+    }
 }

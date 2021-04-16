@@ -2,7 +2,6 @@
 <layout>
 
     <data>
-
         <variable
             name="docente"
             type="com.samuelnunes.emailsdocentesuefs.model.Docente" />

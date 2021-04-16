@@ -10,26 +10,45 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.samuelnunes.emailsdocentesuefs.BuildConfig
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.databinding.AdicionaOuEditaDocenteFragmentBinding
 import com.samuelnunes.emailsdocentesuefs.extensions.isValidEmail
 import com.samuelnunes.emailsdocentesuefs.model.Departamento
 import com.samuelnunes.emailsdocentesuefs.model.Docente
+import com.samuelnunes.emailsdocentesuefs.repository.REPOSITORY
 import com.samuelnunes.emailsdocentesuefs.ui.activity.CHAVE_DOCENTE_ID
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.AdicionaOuEditaDocenteViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 
 @ExperimentalCoroutinesApi
-class AdicionaOuEditaDocenteFragment : Fragment() {
+class AdicionaOuEditaDocenteFragment() : Fragment() {
 
     private val docenteID: String? by lazy {
         arguments?.getString(CHAVE_DOCENTE_ID)
     }
+    private val typeList: String? by lazy {
+        arguments?.getString(REPOSITORY)
+    }
+
     private lateinit var binding: AdicionaOuEditaDocenteFragmentBinding
-    private val viewModel: AdicionaOuEditaDocenteViewModel by viewModel { parametersOf(docenteID) }
+    private val viewModel: AdicionaOuEditaDocenteViewModel by viewModel {
+        parametersOf(
+            selectRepository(typeList),
+            docenteID
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
+    }
 
     private lateinit var docenteCurrent: Docente
 
@@ -65,22 +84,49 @@ class AdicionaOuEditaDocenteFragment : Fragment() {
     }
 
     private fun confirmInput() {
+        val name: String?
+        val email: String?
+        val departmentName: String?
+        val departmentCode: String?
         if (validateName() && validateDepartamento()) {
-            binding.docente!!.departmentName =
-                Departamento.departamentoHashMap[binding.docente!!.departmentCode]
+            name = binding.inputName.text.toString()
+            departmentCode = binding.inputDepartment.text.toString()
+            departmentName = Departamento.departamentoHashMap[departmentCode]
             if (binding.inputEmailLayout.isVisible) {
                 if (validateEmail()) {
-                    viewModel.createDocente(binding.docente!!)
+                    email = binding.inputEmail.text.toString()
+                    saveDocente(name, departmentCode, departmentName, email)
                 } else {
                     return
                 }
+            } else {
+                saveDocente(name, departmentCode, departmentName)
             }
-            viewModel.createDocente(binding.docente!!)
             findNavController().popBackStack()
         } else {
             return
         }
 
+    }
+
+    private fun saveDocente(
+        name: String?,
+        departmentCode: String?,
+        departmentName: String?,
+        email: String? = null
+    ) {
+        val docente = Docente(
+            name = name,
+            email = email,
+            departmentCode = departmentCode,
+            departmentName = departmentName,
+            id = docenteID
+        )
+        if (docente != docenteCurrent) {
+            viewModel.createDocente(
+                docente
+            )
+        }
     }
 
     private fun validateEmail(): Boolean {

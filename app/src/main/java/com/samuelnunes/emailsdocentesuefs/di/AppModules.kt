@@ -3,8 +3,12 @@ package com.samuelnunes.emailsdocentesuefs.di
 import android.content.ClipboardManager
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteAdminDAO
-import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteDAO
+import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteCriadoDAO
+import com.samuelnunes.emailsdocentesuefs.database.dao.DocenteEditadoDAO
+import com.samuelnunes.emailsdocentesuefs.database.dao.DocentePublicoDAO
+import com.samuelnunes.emailsdocentesuefs.repository.DocenteCriadoRepository
+import com.samuelnunes.emailsdocentesuefs.repository.DocenteEditadoRepository
+import com.samuelnunes.emailsdocentesuefs.repository.DocentePublicoRepository
 import com.samuelnunes.emailsdocentesuefs.repository.DocenteRepository
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.AdicionaOuEditaDocenteViewModel
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.ListDocentesFragmentViewModel
@@ -19,13 +23,16 @@ val databaseModule = module {
 
 @ExperimentalCoroutinesApi
 val daoModule = module {
-    single<DocenteDAO> { DocenteDAO(get()) }
-    single<DocenteAdminDAO> { (collection: String) -> DocenteAdminDAO(get(), collection) }
+    single<DocentePublicoDAO> { DocentePublicoDAO(get()) }
+    single<DocenteEditadoDAO> { DocenteEditadoDAO(get()) }
+    single<DocenteCriadoDAO> { DocenteCriadoDAO(get()) }
 }
 
 @ExperimentalCoroutinesApi
 val repositoryModule = module {
-    single<DocenteRepository> { DocenteRepository(get()) }
+    single<DocentePublicoRepository> { DocentePublicoRepository(get(), get(), get()) }
+    single<DocenteEditadoRepository> { DocenteEditadoRepository(get(), get()) }
+    single<DocenteCriadoRepository> { DocenteCriadoRepository(get(), get()) }
 }
 
 val uiModule = module {
@@ -42,12 +49,16 @@ val utilsModule = module {
 
 @ExperimentalCoroutinesApi
 val viewModelModule = module {
-    viewModel<MainActivityViewModel> { MainActivityViewModel(get()) }
-    viewModel<ListDocentesFragmentViewModel> { ListDocentesFragmentViewModel(get()) }
-    viewModel<AdicionaOuEditaDocenteViewModel> { (id: String) ->
+    viewModel<MainActivityViewModel> { MainActivityViewModel() }
+    viewModel<ListDocentesFragmentViewModel> { (repository: DocenteRepository) ->
+        ListDocentesFragmentViewModel(
+            repository
+        )
+    }
+    viewModel<AdicionaOuEditaDocenteViewModel> { (repository: DocenteRepository, id: String) ->
         AdicionaOuEditaDocenteViewModel(
             id,
-            get()
+            repository
         )
     }
 }

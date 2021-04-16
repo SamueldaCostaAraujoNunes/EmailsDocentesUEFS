@@ -8,7 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.samuelnunes.emailsdocentesuefs.R
 import com.samuelnunes.emailsdocentesuefs.databinding.ActivityMainBinding
+import com.samuelnunes.emailsdocentesuefs.ui.fragment.AllListOfDocentesFragment
 import com.samuelnunes.emailsdocentesuefs.ui.fragment.ListDocentesFragment
+import com.samuelnunes.emailsdocentesuefs.ui.fragment.filter
 import com.samuelnunes.emailsdocentesuefs.ui.viewModel.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -29,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectLayoutMenu(menu: Menu) {
         when (val currentFragment = getForegroundFragment()) {
+            is AllListOfDocentesFragment -> {
+                createSearchBar(menu, currentFragment.fragmentList[0])
+            }
             is ListDocentesFragment -> {
                 createSearchBar(menu, currentFragment)
             }
@@ -47,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         return super.onPrepareOptionsMenu(menu)
     }
 
-    private fun createSearchBar(menu: Menu?, fragment: ListDocentesFragment) {
+    private fun createSearchBar(menu: Menu?, fragment: Fragment) {
         menuInflater.inflate(R.menu.search_nav_menu, menu)
         val search = menu?.findItem(R.id.nav_search)
         val searchView = search?.actionView as SearchView
@@ -56,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean = false
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    fragment.adapter.filter(newText)
+                    fragment.filter(newText)
                 }
                 return true
             }
